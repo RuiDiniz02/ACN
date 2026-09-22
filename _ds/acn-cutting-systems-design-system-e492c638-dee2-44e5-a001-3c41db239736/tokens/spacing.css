@@ -1,0 +1,51 @@
+/* ACN Cutting Systems — Spacing, radius, shadow, and motion tokens.
+   Not defined in the brand manual (which covers logo/color/type only) — authored to fit
+   the manual's minimal, engineering-grade, right-angled aesthetic. */
+
+:root {
+  /* Spacing scale (4px base, industrial grid) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+  --space-32: 128px;
+
+  /* Logo protection area (from manual: 7mm minimum clear space, expressed as an em-relative unit) */
+  --logo-protection-area: 0.14em; /* ~7mm at typical print scale relative to mark height */
+
+  /* Radius — the brand mark, machinery, and signage are all hard right angles.
+     Radius stays at 0 or near-0; used sparingly only for small UI affordances (inputs, chips). */
+  --radius-none: 0px;
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-pill: 999px;
+
+  /* Border widths */
+  --border-width-sm: 1px;
+  --border-width-md: 2px;
+  --border-width-lg: 4px; /* used for hazard-stripe / accent edges */
+
+  /* Shadow — flat, minimal, engineering-drawing feel. No soft glows. */
+  --shadow-none: none;
+  --shadow-sm: 0 1px 2px rgba(10, 12, 14, 0.08);
+  --shadow-md: 0 2px 8px rgba(10, 12, 14, 0.12);
+  --shadow-lg: 0 8px 24px rgba(10, 12, 14, 0.16);
+
+  /* Motion — utilitarian, quick, no bounce/elastic easing (matches precision-machinery tone) */
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1); /* @kind other */
+  --duration-fast: 120ms; /* @kind other */
+  --duration-base: 180ms; /* @kind other */
+  --duration-slow: 280ms; /* @kind other */
+
+  /* Layout */
+  --container-max: 1440px;
+  --grid-gutter: var(--space-6);
+}

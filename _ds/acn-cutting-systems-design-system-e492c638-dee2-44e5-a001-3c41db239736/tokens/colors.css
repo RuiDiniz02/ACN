@@ -1,0 +1,83 @@
+/* ACN Cutting Systems — Color tokens
+   Base palette from official brand manual: Pantone 2935 C (blue), Pantone Black, Pantone Cool Gray 3C.
+   Neutral ramp and semantic states are extensions derived (oklch) to stay harmonious with the brand blue —
+   not present in the source manual, built to cover UI/document needs. */
+
+:root {
+  /* ---- Brand base (from manual) ---- */
+  --acn-blue: #0055b8;      /* Pantone 2935 C */
+  --acn-black: #000000;     /* Pantone Black */
+  --acn-cool-gray-3c: #c8c8c8; /* Pantone Cool Gray 3 C */
+
+  /* ---- Blue ramp (derived from --acn-blue via oklch, for hover/press/tints) ---- */
+  --acn-blue-900: #002a5c;
+  --acn-blue-800: #003c81;
+  --acn-blue-700: #00499d;
+  --acn-blue-600: #0055b8; /* = --acn-blue */
+  --acn-blue-500: #1966c9;
+  --acn-blue-400: #4a86d6;
+  --acn-blue-300: #85ace5;
+  --acn-blue-200: #bcd3f0;
+  --acn-blue-100: #e2ecfa;
+  --acn-blue-050: #f2f7fd;
+
+  /* ---- Neutral ramp (steel / graphite — matches machine grey + Cool Gray 3C) ---- */
+  --neutral-1000: #0a0c0e;
+  --neutral-900: #16191d;
+  --neutral-800: #24282e;
+  --neutral-700: #383e46;
+  --neutral-600: #545c66;
+  --neutral-500: #767f89;
+  --neutral-400: #9aa1a9;
+  --neutral-300: #c8c8c8; /* = Cool Gray 3C */
+  --neutral-200: #dcdee0;
+  --neutral-100: #eceeef;
+  --neutral-050: #f6f7f7;
+  --neutral-000: #ffffff;
+
+  /* ---- Signal colors (industrial safety cues seen on the equipment: amber/black hazard, red e-stop, green run) ---- */
+  --signal-amber: #f5a300;
+  --signal-red: #d0271d;
+  --signal-green: #1e8a4c;
+
+  /* ================= Semantic aliases ================= */
+
+  /* Surfaces */
+  --surface-page: var(--neutral-000);
+  --surface-sunken: var(--neutral-050);
+  --surface-card: var(--neutral-000);
+  --surface-inverse: var(--neutral-900);
+  --surface-brand: var(--acn-blue);
+  --surface-overlay: rgba(10, 12, 14, 0.6);
+
+  /* Borders */
+  --border-subtle: var(--neutral-200);
+  --border-default: var(--neutral-300);
+  --border-strong: var(--neutral-600);
+  --border-brand: var(--acn-blue);
+  --border-on-inverse: rgba(255, 255, 255, 0.16);
+
+  /* Text */
+  --text-primary: var(--neutral-900);
+  --text-secondary: var(--neutral-600);
+  --text-tertiary: var(--neutral-500);
+  --text-disabled: var(--neutral-300);
+  --text-brand: var(--acn-blue);
+  --text-on-brand: var(--neutral-000);
+  --text-on-inverse: var(--neutral-000);
+  --text-on-inverse-secondary: var(--neutral-300);
+
+  /* Interactive */
+  --action-primary: var(--acn-blue);
+  --action-primary-hover: var(--acn-blue-700);
+  --action-primary-active: var(--acn-blue-900);
+  --action-secondary: var(--neutral-900);
+  --action-secondary-hover: var(--neutral-700);
+  --focus-ring: var(--acn-blue-400);
+
+  /* Semantic states */
+  --state-success: var(--signal-green);
+  --state-warning: var(--signal-amber);
+  --state-danger: var(--signal-red);
+  --state-info: var(--acn-blue);
+}

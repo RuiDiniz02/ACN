@@ -1,0 +1,37 @@
+/* ACN Cutting Systems — Editorial grid + print specification tokens.
+   Not in the brand manual (logo/color/type only) — authored for consistent print production
+   across brand guidelines, catalogues, datasheets, and PPTX decks. */
+
+:root {
+  /* ---- Editorial grid ---- */
+  --grid-columns: 12; /* @kind other */
+  --grid-gutter-print: 4mm; /* @kind spacing */
+  --grid-gutter-digital: 24px;
+  --grid-margin-print: 20mm;
+  --grid-margin-digital: 64px;
+
+  /* ---- Page sizes (production) ---- */
+  --page-a4-width: 210mm; /* @kind spacing */
+  --page-a4-height: 297mm; /* @kind spacing */
+  --page-letter-width: 216mm; /* 8.5in @kind spacing */
+  --page-letter-height: 279mm; /* 11in @kind spacing */
+  --page-bleed: 3mm; /* @kind spacing */
+  --page-safe-margin: 12mm;
+
+  /* ---- Presentation (16:9 deck) ---- */
+  --deck-width: 1920px;
+  --deck-height: 1080px;
+  --deck-margin: 96px;
+
+  /* ---- Print production ---- */
+  --print-resolution: 300dpi; /* @kind other */
+  --print-color-mode: CMYK; /* @kind other */
+  --print-min-type-size: 8pt;
+
+  /* ---- White space rhythm (multiples of the 4px/space scale, print-oriented) ---- */
+  --whitespace-micro: var(--space-2);   /* between a label and its value */
+  --whitespace-tight: var(--space-4);   /* between related lines */
+  --whitespace-component: var(--space-8); /* between blocks within a section */
+  --whitespace-section: var(--space-24); /* between major sections on a page */
+  --whitespace-page-top: var(--space-32); /* top margin rhythm on cover/section pages */
+}

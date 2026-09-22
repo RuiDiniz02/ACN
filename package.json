@@ -1,0 +1,9 @@
+{
+  "name": "acn-cutting-systems-landing",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {"start": "node --env-file-if-exists=.env server.mjs", "test": "node --test tests/server.test.mjs"},
+  "engines": {"node": ">=22"},
+  "dependencies": {"nodemailer": "^7.0.0"}
+}

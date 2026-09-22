@@ -1,0 +1,46 @@
+/* ACN Cutting Systems — Typography tokens
+   Single family (Changa) per brand manual — used across display, body, and UI/label contexts
+   via weight + tracking changes rather than a second typeface. */
+
+:root {
+  --font-family-display: "Changa", "Arial Narrow", sans-serif;
+  --font-family-body: "Changa", "Arial Narrow", sans-serif;
+  --font-family-mono: "Changa", monospace; /* brand has no monospace; Changa used at fixed tracking for codes/specs */
+
+  /* Weights available */
+  --font-weight-extralight: 200;
+  --font-weight-light: 300;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+
+  /* Display scale — machine names, section headers, catalogue covers */
+  --text-display-xl: 800 88px/0.98 var(--font-family-display);
+  --text-display-lg: 800 64px/1.0 var(--font-family-display);
+  --text-display-md: 700 44px/1.05 var(--font-family-display);
+  --text-display-sm: 700 32px/1.1 var(--font-family-display);
+
+  /* Heading scale — document/UI headings */
+  --text-h1: 700 28px/1.2 var(--font-family-body);
+  --text-h2: 600 22px/1.25 var(--font-family-body);
+  --text-h3: 600 18px/1.3 var(--font-family-body);
+  --text-h4: 600 15px/1.35 var(--font-family-body);
+
+  /* Body scale */
+  --text-body-lg: 400 18px/1.5 var(--font-family-body);
+  --text-body-md: 400 16px/1.5 var(--font-family-body);
+  --text-body-sm: 400 14px/1.45 var(--font-family-body);
+
+  /* Label / UI scale */
+  --text-label-lg: 600 14px/1.2 var(--font-family-body);
+  --text-label-md: 600 12px/1.2 var(--font-family-body);
+  --text-label-sm: 600 11px/1.2 var(--font-family-body);
+
+  /* Overline / eyebrow — wide tracking, uppercase, as used in "Cutting Systems" lockup */
+  --text-overline: 600 12px/1.2 var(--font-family-body);
+  --tracking-overline: 0.12em;
+  --tracking-display: -0.01em;
+  --tracking-wide: 0.06em;
+}
