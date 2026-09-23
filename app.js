@@ -8,32 +8,54 @@ let language = ['pt','en'].includes(queryLanguage) ? queryLanguage : (['pt','en'
 let filter = 'all';
 let formState = '';
 let isSending = false;
-const selectedModels = {smartline:'1530', 'tube-heavy':'standard'};
+const selectedModels = Object.fromEntries(MACHINES.filter(m => m.models || m.variants).map(m => [m.id,(m.models || m.variants)[0].id]));
 const openAddons = new Set();
+const expandedMachines = new Set();
 const t = key => COPY[language][key] ?? key;
 const local = value => value && typeof value === 'object' ? value[language] : value;
 const escapeHTML = value => String(value ?? '').replace(/[&<>"']/g, character => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[character]));
 const pending = () => `<span class="pending-badge">${t('pending')}</span>`;
 const machineName = machine => language === 'en' && machine.nameEn ? machine.nameEn : machine.name;
-
+const activeModel = machine => (machine.models || machine.variants || []).find(model => model.id === selectedModels[machine.id]);
 function renderSpecs(machine) {
-  let specs = machine.specs;
-  if (machine.variants) specs = machine.variants.find(variant => variant.id === selectedModels[machine.id]).specs;
-  if (machine.models) specs = specs.map(([key,value]) => [key, key === 'workingArea' ? machine.models.find(model => model.id === selectedModels[machine.id]).area : value]);
-  return `<dl class="specs">${specs.map(([key,value]) => `<div><dt>${t(key)}</dt><dd>${value === null ? pending() : escapeHTML(local(value))}</dd></div>`).join('')}</dl>`;
+  const model = activeModel(machine);
+  let specs = model?.specs || machine.specs;
+  if (model?.power) specs = model.area ? [['workingArea',model.area],['source',model.power]] : [['minDiameter',model.minDiameter],['maxDiameter',model.maxDiameter],['source',model.power]];
+  else if (model?.area) specs = specs.map(([key,value]) => [key,key === 'workingArea' ? model.area : value]);
+  return `<dl class="specs">${specs.map(([key,value]) => `<div><dt>${t(key)}</dt><dd>${value === null ? pending() : escapeHTML(local(value))}</dd></div>`).join('')}${(machine.features || []).map(f => `<div><dt>${language === 'pt' ? 'Características' : 'Features'}</dt><dd>${escapeHTML(local(f))}</dd></div>`).join('')}</dl>`;
+}
+function renderMachineAddons(machine) {
+  const ids = activeModel(machine)?.addons || machine.addons;
+  return ids.length ? `<details class="addons" data-addons="${machine.id}" ${openAddons.has(machine.id) ? 'open' : ''}><summary><span><strong>Add-ons <span class="addons-count">${String(ids.length).padStart(2,'0')}</span></strong><small>${language === 'pt' ? 'Ver opções disponíveis' : 'View available options'}</small></span></summary><ul>${ids.map(id => {const addon = ADDONS.find(a => a.id === id);return `<li><a href="#addon-${id}" data-addon-link="${id}">${escapeHTML(local(addon.title))} ↗</a></li>`;}).join('')}</ul></details>` : '';
+}
+function renderAddons() {
+  $('#addon-grid').innerHTML = ADDONS.map(addon => `<article class="addon-card" id="addon-${addon.id}" tabindex="-1"><div class="addon-placeholder"><span aria-hidden="true">＋</span><p>${t('photoPending')}</p></div><div><p class="machine-tag">${escapeHTML(addon.applies)}</p><h3>${escapeHTML(local(addon.title))}</h3><p>${escapeHTML(local(addon.text))}</p></div></article>`).join('');
 }
 function renderMachines() {
+  const machinesVisible = !['addons','custom'].includes(filter);
+  $('#machine-grid').hidden = !machinesVisible;
+  $('#addons').hidden = filter !== 'addons';
+  $('#manufacture').hidden = filter !== 'custom';
+  $('.catalogue-bottom').hidden = !machinesVisible;
+  $$('[data-filter]').forEach(button => button.setAttribute('aria-pressed',String(button.dataset.filter === filter)));
+  if (!machinesVisible) {
+    $('#result-count').textContent = filter === 'addons' ? `${String(ADDONS.length).padStart(2,'0')} add-ons` : 'ACN Manufacture';
+    return;
+  }
   const shown = MACHINES.filter(machine => filter === 'all' || machine.cat === filter);
+  $('#machine-grid').className = `machine-grid ${filter === 'all' ? 'is-overview' : 'is-detail'}`;
   $('#machine-grid').innerHTML = shown.map(machine => {
     const number = String(MACHINES.indexOf(machine) + 1).padStart(2,'0');
-    const models = machine.models ? `<p class="model-label">${t('models')}</p><div class="model-options" role="group" aria-label="${t('models')} SMARTLINE">${machine.models.map(model => `<button type="button" data-model="${model.id}" data-machine="${machine.id}" aria-pressed="${selectedModels[machine.id] === model.id}">${model.name}<small>${model.area}</small></button>`).join('')}</div>` : '';
-    const variants = machine.variants ? `<div class="model-options" role="group" aria-label="${t('models')} ${machineName(machine)}">${machine.variants.map(variant => `<button type="button" data-model="${variant.id}" data-machine="${machine.id}" aria-pressed="${selectedModels[machine.id] === variant.id}">${t(variant.label)}</button>`).join('')}</div>` : '';
-    const addons = machine.addons.length ? `<details class="addons" data-addons="${machine.id}" ${openAddons.has(machine.id) ? 'open' : ''}><summary><span>Add-ons <span class="addons-count">/ ${String(machine.addons.length).padStart(2,'0')}</span></span></summary><ul>${machine.addons.map(addon => `<li><strong>${escapeHTML(local(addon.title))}</strong>${addon.text ? `<p>${escapeHTML(local(addon.text))}</p>` : ''}${addon.pending ? pending() : ''}${addon.engineering ? `<p>${t('engineering')}</p>` : ''}</li>`).join('')}</ul></details>` : '';
-    return `<article class="machine-card" id="machine-${machine.id}" aria-labelledby="title-${machine.id}"><div class="machine-photo ${machine.image ? '' : 'empty'}">${machine.image ? `<img src="${machine.image}" alt="ACN ${machineName(machine)}" loading="lazy" width="1000" height="625">` : `<span class="photo-pending">${t('photoPending')}</span>`}<span class="machine-number">${number} / ACN</span></div><div class="machine-body"><p class="machine-tag">${t(machine.tag)}</p><h3 id="title-${machine.id}">${machineName(machine)}</h3><p class="machine-desc">${escapeHTML(local(machine.description))}</p>${models}${variants}${renderSpecs(machine)}${addons}<p class="engineering-note">${t('engineering')}</p><a class="machine-link" href="#contact" data-enquire="${machine.id}"><span>${t('configure')}</span><span aria-hidden="true">↗</span></a></div></article>`;
+    const models = machine.models || machine.variants;
+    const options = models ? `<p class="model-label">${t('models')}</p><div class="model-options" role="group" aria-label="${t('models')} ${machineName(machine)}">${models.map(model => `<button type="button" data-model="${model.id}" data-machine="${machine.id}" aria-pressed="${selectedModels[machine.id] === model.id}">${model.name || t(model.label)}</button>`).join('')}${machine.manufacture ? '<a href="#manufacture">Customized ↗</a>' : ''}</div>` : '';
+    return `<article class="machine-card ${expandedMachines.has(machine.id) ? 'is-expanded' : ''}" id="machine-${machine.id}" aria-labelledby="title-${machine.id}"><div class="machine-photo"><img src="${machine.image}" alt="ACN ${machineName(machine)}" loading="lazy" width="1000" height="625"><span class="machine-number">${number} / ACN</span></div><div class="machine-body"><p class="machine-tag">${t(machine.tag)}</p><h3 id="title-${machine.id}"><button class="machine-toggle" type="button" data-expand="${machine.id}" aria-expanded="${filter !== 'all' || expandedMachines.has(machine.id)}" aria-controls="details-${machine.id}">${machineName(machine)} <span aria-hidden="true">+</span></button></h3><div class="machine-details" id="details-${machine.id}"><p class="machine-desc">${escapeHTML(local(machine.description))}</p>${options}<div class="model-specs">${renderSpecs(machine)}</div><div class="model-addons">${renderMachineAddons(machine)}</div><a class="machine-link" href="#contact" data-enquire="${machine.id}"><span>${t('configure')}</span><span aria-hidden="true">↗</span></a></div></div></article>`;
   }).join('');
   $('#result-count').textContent = `${String(shown.length).padStart(2,'0')} ${t('systems')}`;
-  $$('.addons').forEach(details => details.addEventListener('toggle', () => details.open ? openAddons.add(details.dataset.addons) : openAddons.delete(details.dataset.addons)));
 }
+$('#machine-grid').addEventListener('toggle', event => {
+  const details = event.target;
+  if (details.matches('.addons')) details.open ? openAddons.add(details.dataset.addons) : openAddons.delete(details.dataset.addons);
+}, true);
 function renderFormStatus() {
   $('#form-status').textContent = formState ? t(formState) : '';
   $('#form-status').className = `form-status ${formState === 'success' ? 'success' : formState && formState !== 'sending' ? 'error' : ''}`;
@@ -53,20 +75,52 @@ function setLanguage(next) {
   $('.menu-toggle').setAttribute('aria-label', t($('.menu-toggle').getAttribute('aria-expanded') === 'true' ? 'closeMenu' : 'menuLabel'));
   try { localStorage.setItem('acn-language', language); } catch {}
   const url = new URL(location.href); url.searchParams.set('lang', language); history.replaceState(null,'',url);
-  renderMachines(); renderFormStatus();
+  renderMachines(); renderAddons(); renderFormStatus();
 }
 $$('[data-lang]').forEach(button => button.addEventListener('click', () => setLanguage(button.dataset.lang)));
-$$('[data-filter]').forEach(button => button.addEventListener('click', () => {
-  filter = button.dataset.filter;
-  $$('[data-filter]').forEach(item => item.setAttribute('aria-pressed', String(item === button)));
+function selectCatalogueView(next) {
+  filter = next;
   renderMachines();
+}
+$$('[data-filter]').forEach(button => button.addEventListener('click', () => {
+  selectCatalogueView(button.dataset.filter);
+  if (['#manufacture','#addons'].includes(location.hash) || location.hash.startsWith('#addon-')) history.replaceState(null,'',`${location.pathname}${location.search}#range`);
 }));
+function openCatalogueAnchor(hash) {
+  if (hash === '#manufacture') selectCatalogueView('custom');
+  else if (hash === '#addons' || hash.startsWith('#addon-')) selectCatalogueView('addons');
+  else if (hash === '#range') selectCatalogueView('all');
+  else return;
+  const target = document.getElementById(hash.slice(1));
+  target?.scrollIntoView();
+  if (hash.startsWith('#addon-')) target?.focus({preventScroll:true});
+}
+document.addEventListener('click', event => {
+  const link = event.target.closest('a[href^="#"]');
+  if (link) openCatalogueAnchor(link.getAttribute('href'));
+});
+window.addEventListener('hashchange', () => openCatalogueAnchor(location.hash));
 $('#machine-grid').addEventListener('click', event => {
+  const card = event.target.closest('.machine-card');
+  const expand = event.target.closest('[data-expand]');
+  if (expand) {
+    const open = filter === 'all' ? !card.classList.contains('is-expanded') : card.classList.contains('is-collapsed');
+    card.classList.toggle('is-expanded',open);
+    card.classList.toggle('is-collapsed',!open);
+    open ? expandedMachines.add(expand.dataset.expand) : expandedMachines.delete(expand.dataset.expand);
+    expand.setAttribute('aria-expanded',String(open));
+  }
   const model = event.target.closest('[data-model]');
   if (model) {
-    selectedModels[model.dataset.machine] = model.dataset.model;
-    renderMachines();
-    $(`[data-machine="${model.dataset.machine}"][data-model="${model.dataset.model}"]`).focus({preventScroll:true});
+    const machine = MACHINES.find(m => m.id === model.dataset.machine);
+    selectedModels[machine.id] = model.dataset.model;
+    card.classList.remove('is-collapsed');
+    card.classList.add('is-expanded');
+    expandedMachines.add(machine.id);
+    $('[data-expand]',card).setAttribute('aria-expanded','true');
+    $$('[data-model]',card).forEach(button => button.setAttribute('aria-pressed',String(button === model)));
+    $('.model-specs',card).innerHTML = renderSpecs(machine);
+    $('.model-addons',card).innerHTML = renderMachineAddons(machine);
   }
   const enquiry = event.target.closest('[data-enquire]');
   if (enquiry) {
@@ -90,6 +144,19 @@ $('.menu-toggle').addEventListener('click', () => {
 $$('#navigation a').forEach(link => link.addEventListener('click', () => closeMenu()));
 document.addEventListener('keydown', event => { if (event.key === 'Escape' && $('#navigation').classList.contains('is-open')) closeMenu(true); });
 document.addEventListener('click', event => { if (!event.target.closest('#header')) closeMenu(); });
+
+$('#machine-grid').addEventListener('pointermove', event => {
+  if (innerWidth < 900 || reducedMotion?.matches) return;
+  const card = event.target.closest('.machine-card');
+  if (!card) return;
+  const bounds = card.getBoundingClientRect();
+  card.style.setProperty('--mx', `${event.clientX - bounds.left}px`);
+  card.style.setProperty('--my', `${event.clientY - bounds.top}px`);
+});
+$('#machine-grid').addEventListener('pointerout', event => {
+  const card = event.target.closest('.machine-card');
+  if (card && !card.contains(event.relatedTarget)) { card.style.removeProperty('--mx'); card.style.removeProperty('--my'); }
+});
 
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
 const clamp = (value,min=0,max=1) => Math.max(min, Math.min(max,value));
@@ -198,3 +265,5 @@ $('#contact-form').addEventListener('submit', async event => {
 });
 $('#year').textContent = new Date().getFullYear();
 setLanguage(language); setupHero(); updateScroll();
+
+if (location.hash) openCatalogueAnchor(location.hash);

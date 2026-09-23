@@ -5,7 +5,7 @@ import path from 'node:path';
 import nodemailer from 'nodemailer';
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
-export const RECIPIENTS = Object.freeze(['geral@acncutting.com','marketing@motofil.com']);
+export const RECIPIENTS = Object.freeze(['marketing@motofil.com']);
 const MIME = {'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'text/javascript; charset=utf-8','.jpg':'image/jpeg','.png':'image/png','.webp':'image/webp','.svg':'image/svg+xml','.ttf':'font/ttf','.woff2':'font/woff2','.mp4':'video/mp4','.webm':'video/webm'};
 const emailPattern = /^[^\s@<>\r\n]+@[^\s@<>\r\n]+\.[^\s@<>\r\n]+$/;
 export function validateContact(data) {

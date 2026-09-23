@@ -28,3 +28,75 @@
 
 /* Square renders have generous top/bottom margins: fill the frame around the complete machine. */
 .machine-photo img[src$="SheetMetal.webp"],.machine-photo img[src$="DragoM.webp"],.machine-photo img[src$="DragoM_Multiprocessos.webp"],.machine-photo img[src$="Feline.webp"]{object-fit:cover}
+
+/* Catalogue layout: three compact columns with intentional breathing room. */
+nav a{font-size:14px;letter-spacing:.1em}
+.language-switch,.header-cta{font-size:13px}
+.filters button{font-size:12px;letter-spacing:.07em}
+.machine-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:32px;align-items:start}
+.machine-card{background:radial-gradient(320px circle at var(--mx,50%) var(--my,0%),#1b344d 0%,#11151a 45%);transition:border-color .25s,transform .25s}
+.machine-card:after{content:'';position:absolute;inset:0;background:radial-gradient(260px circle at var(--mx,50%) var(--my,0%),#4a86d61c,transparent 70%);pointer-events:none}
+.machine-card:hover{border-color:#4a86d6;transform:translateY(-4px)}
+.machine-body{padding:26px}
+.machine-desc{font-size:15px;min-height:0}
+.machine-tag,.model-label{font-size:12px}
+.specs dt{font-size:12px}.specs dd{font-size:14px}
+.addons summary{font-size:14px}.addons li strong{font-size:14px}.addons li p{font-size:13px}
+.custom-line-panel{grid-column:1/-1;display:grid;grid-template-columns:1.2fr 1fr;gap:clamp(32px,7vw,110px);align-items:center;padding:clamp(30px,5vw,72px);border:1px solid #4a86d6;background:linear-gradient(120deg,#132a42,#11151a 62%);position:relative;overflow:hidden}
+.custom-line-panel:before{content:'ML / 01';position:absolute;right:4%;top:8%;font-size:clamp(70px,13vw,180px);font-weight:800;line-height:1;color:#ffffff08;letter-spacing:-.08em}
+.custom-line-panel h3{font-size:clamp(32px,4vw,58px);position:relative}.custom-line-panel p:not(.machine-tag){max-width:580px;color:#c4ccd5;font-size:17px;line-height:1.7;margin:18px 0 28px;position:relative}.custom-line-panel .button{position:relative}.custom-line-panel ul{list-style:none;margin:0;padding:0;position:relative}.custom-line-panel li{border-top:1px solid #ffffff2b;padding:18px 0;color:#e4e8ed;font-size:15px}.custom-line-panel li:before{content:'+';color:var(--blue-light);margin-right:14px}
+@media(max-width:1100px){.machine-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:760px){nav a{font-size:15px}.filters button{font-size:11px}.machine-grid{grid-template-columns:1fr;gap:26px}.machine-body{padding:26px 22px}.machine-desc{min-height:0}.custom-line-panel{grid-template-columns:1fr;padding:30px 22px}.custom-line-panel p:not(.machine-tag){font-size:15px}}
+@media(prefers-reduced-motion:reduce){.machine-card:hover{transform:none}.machine-card:after{display:none}}
+
+/* Expand cards in the grid while preserving their selected model. */
+
+.machine-grid{grid-auto-rows:auto;align-items:start}
+.machine-card{isolation:isolate;overflow:hidden}
+.machine-card:after{z-index:2}
+.machine-body{position:relative}
+.machine-toggle{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;border:0;padding:0;background:none;color:inherit;font:inherit;text-align:left}
+.machine-toggle span{font-size:22px;color:var(--blue-light)}
+.machine-toggle[aria-expanded=true] span{transform:rotate(45deg)}
+.machine-details{position:relative}
+.machine-grid.is-overview .machine-details{display:none}
+.machine-grid.is-overview .machine-card.is-expanded .machine-details{display:block}
+@media(hover:hover) and (pointer:fine){.machine-grid.is-overview .machine-card:not(.is-collapsed):hover .machine-details,.machine-grid.is-overview .machine-card:not(.is-collapsed):focus-within .machine-details{display:block}}
+.machine-features{list-style:none;padding:0;margin:0 0 24px;color:#b9d6f5;font-size:13px}
+.machine-features li:before{content:'＋';margin-right:8px;color:var(--blue-light)}
+.model-options a{display:flex;align-items:center;min-height:44px;padding:9px 14px;border:1px solid #4a86d6;color:#b9d6f5;font-size:13px}
+.addons a{display:block;padding:4px 0;font-size:14px;color:#b9d6f5}.addons a:hover{text-decoration:underline}
+.addons-section{border-top:1px solid #ffffff20;padding-block:64px}
+.addon-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;margin-top:30px}
+.addon-card{border:1px solid #ffffff20;background:#11151a;scroll-margin-top:110px}
+.addon-card:target{border-color:var(--blue-light)}
+.addon-card>div:last-child{padding:22px}.addon-card h3{font-size:23px}.addon-card p:not(.machine-tag){font-size:14px;color:#aeb4bc;margin-top:10px}
+.addon-placeholder{height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(#4a86d608 1px,transparent 1px),linear-gradient(90deg,#4a86d608 1px,transparent 1px);background-size:24px 24px;border-bottom:1px solid #ffffff14}
+.addon-placeholder>span{color:#4a86d6;font-size:26px}.addon-placeholder p{font-size:10px!important;text-transform:uppercase;letter-spacing:.1em}
+.manufacture{border-block:1px solid #4a86d640;background:radial-gradient(ellipse at 95% 0,#163350,transparent 60%),#0c121a;padding-block:72px}
+.manufacture-heading{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.manufacture h2{font-size:clamp(32px,3.6vw,52px)}.manufacture p{color:#b9c4d0;font-size:15px;line-height:1.7}.manufacture-intro p+p{margin-top:12px}
+.manufacture-engineering{display:grid;grid-template-columns:1fr 2fr;gap:40px;margin-top:36px;padding-top:30px;border-top:1px solid #ffffff20}.manufacture-engineering h3{font-size:26px}
+.manufacture-process{list-style:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;margin:32px 0;padding:0;border:1px solid #4a86d640;background:#0d192680}
+.manufacture-process li{padding:22px;border-right:1px solid #4a86d640}.manufacture-process li:last-child{border:0}.manufacture-process span{font-size:12px;color:#6bafff;letter-spacing:.15em}.manufacture-process h3{font-size:23px;margin:8px 0}.manufacture-process p{font-size:13px}
+.manufacture-testimonial{margin:0;padding:0 0 0 22px;border-left:2px solid #4a86d6}.manufacture-testimonial blockquote{margin:0;color:#d2dbe6;font-size:15px;line-height:1.7}.manufacture-testimonial figcaption{margin-top:10px;font-size:12px;color:#8b9bab}
+.manufacture-closing{display:flex;align-items:center;justify-content:space-between;gap:24px;margin-top:28px}.manufacture-closing p{color:white;font-size:17px}
+@media(max-width:1100px){.addon-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.manufacture-heading{gap:32px}.site-header nav{gap:16px}.site-header nav a{font-size:11px}}
+@media(max-width:760px){.addon-grid,.manufacture-heading,.manufacture-engineering{grid-template-columns:1fr}.manufacture-process{grid-template-columns:1fr 1fr}.manufacture-process li{border-bottom:1px solid #4a86d640}.manufacture-process li:nth-child(2){border-right:0}.manufacture-process li:nth-child(3){border-bottom:0}.manufacture-closing{align-items:flex-start;flex-direction:column}.manufacture-engineering{gap:16px}.manufacture{padding-block:52px}.site-header nav a{font-size:15px}}
+
+/* Catalogue views share the same content area. */
+[hidden]{display:none!important}
+.catalogue .addons-section{padding:12px 0 0;border:0}
+.catalogue .addons-section>.container{width:100%}
+.catalogue .manufacture{padding:clamp(24px,4vw,48px);border:1px solid #4a86d640}
+.catalogue .manufacture>.container{width:100%}
+.machine-card.is-collapsed .machine-details{display:none}
+.addons{border:0;margin:22px 0}
+.addons summary{padding:14px 16px;border:1px solid #4a86d680;background:#0055b829;transition:background .2s,border-color .2s}
+.addons summary:hover{background:#0055b84d;border-color:#85ace5}
+.addons summary strong{display:block;font-size:15px;font-weight:600;color:#fff}
+.addons summary small{display:block;margin-top:3px;font-size:12px;color:#bdcde0}
+.addons summary:after{content:'⌄';font-size:24px;color:white}
+.addons[open] summary:after{content:'⌃'}
+.addons ul{padding:0 16px 8px;border:1px solid #4a86d640;border-top:0}
+.addons a{text-decoration:underline;text-underline-offset:4px}

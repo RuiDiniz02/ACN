@@ -18,19 +18,19 @@ test('validates optional phone, malformed email, lengths and header injection',(
   assert.equal(validateContact({...valid,message:'  '}),null);
   assert.equal(validateContact({...valid,phone:123}),null);
 });
-test('routes to both fixed recipients and ignores submitted recipient overrides', async () => {
+test('routes to the fixed marketing recipient and ignores submitted recipient overrides', async () => {
   let captured;
   await withServer({env:{MAIL_FROM:'web@acncutting.com'},transport:{sendMail:async message => {captured=message; return {accepted:[...RECIPIENTS]};}}},async({post}) => {
     const res = await post({...valid,to:'attacker@example.com',phone:'+351 900 000 000'});
     assert.equal(res.status,200); assert.deepEqual(await res.json(),{ok:true});
-    assert.deepEqual(captured.to,['geral@acncutting.com','marketing@motofil.com']);
+      assert.deepEqual(captured.to,['marketing@motofil.com']);
     assert.equal(captured.replyTo,'qa@example.com'); assert.equal(captured.from,'web@acncutting.com');
     assert.match(captured.text,/\+351 900 000 000/);
   });
 });
 test('does not claim success without SMTP or after partial rejection',async() => {
   await withServer({env:{},transport:null},async({post}) => {assert.equal((await post()).status,503);});
-  await withServer({env:{},transport:{sendMail:async()=>({accepted:[RECIPIENTS[0]]})}},async({post}) => {assert.equal((await post()).status,502);});
+    await withServer({env:{},transport:{sendMail:async()=>({accepted:[]})}},async({post}) => {assert.equal((await post()).status,502);});
 });
 test('blocks spam, cross-origin posts, invalid data and excess attempts',async() => {
   let sends=0;
